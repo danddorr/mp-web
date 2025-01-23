@@ -2,39 +2,12 @@ import React, { useState } from 'react';
 import { Menu, Car, User, X } from 'lucide-react';
 import SlideOutMenu from './Menu';
 
-const Header = () => {
+const Header = ({ onLogOut, gateStateDisplay, sendTrigger }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => {
       setIsMenuOpen(!isMenuOpen);
     };
-
-    let status = 'Open';
-
-  const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case 'open':
-        return 'bg-green-500';
-      case 'closed':
-        return 'bg-red-500';
-      default:
-        return 'bg-yellow-500';
-    }
-  };
-
-  function onClose() {
-    console.log('Closing the gate');
-  }
-
-    function onOpenVehicle() {
-        console.log('Opening the gate for vehicles');
-        }
-
-    function onOpenPedestrian() {
-        console.log('Opening the gate for pedestrians');
-    }
-
-    
 
   return (
     <header className="bg-gray-900 border-b border-gray-800 p-4 sticky top-0 bottom-0 z-10">
@@ -52,8 +25,8 @@ const Header = () => {
             
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-400">Status:</span>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(status)} text-white`}>
-                {status}
+              <span className={`px-2 py-1 rounded-full text-xs font-medium text-white`}>
+                {gateStateDisplay}
               </span>
             </div>
           </div>
@@ -61,7 +34,7 @@ const Header = () => {
           {/* Right side - Control Buttons */}
           <div className="flex items-center gap-2">
             <button
-              onClick={onOpenVehicle}
+              onClick={() => sendTrigger('start_v')}
               aria-label="Open for vehicles"
               className="flex items-center gap-2 px-3 py-2 text-sm bg-blue-600 hover:bg-blue-500 
                        text-white rounded-lg transition-colors md:px-4"
@@ -71,7 +44,7 @@ const Header = () => {
             </button>
             
             <button
-              onClick={onOpenPedestrian}
+              onClick={() => sendTrigger('start_p')}
               aria-label="Open for pedestrians"
               className="flex items-center gap-2 px-3 py-2 text-sm bg-blue-600 hover:bg-blue-500 
                        text-white rounded-lg transition-colors md:px-4"
@@ -81,7 +54,7 @@ const Header = () => {
             </button>
             
             <button
-              onClick={onClose}
+              onClick={() => sendTrigger('close')}
               aria-label="Close gate"
               className="flex items-center gap-2 px-3 py-2 text-sm bg-red-600 hover:bg-red-500 
                        text-white rounded-lg transition-colors md:px-4"
@@ -92,7 +65,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-      <SlideOutMenu isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
+      <SlideOutMenu isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} onLogOut={onLogOut} />
     </header>
     
   );

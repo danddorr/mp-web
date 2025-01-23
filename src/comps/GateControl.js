@@ -1,46 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Menu, Car, UserCircle2, Lock } from 'lucide-react';
-import Cookies from 'js-cookie';
 import SlideOutMenu from './Menu';
 
-const GateControlApp = () => {
+const GateControlApp = ({ gateStateDisplay, sendTrigger, onLogOut }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [gateStateDisplay, setGateStateDisplay] = useState('');
-  const [gateState, setGateState] = useState('closed');
-
-  const GATE_STATES = {
-    'open_p': 'Brána je otvorená pre chodcov',
-    'open_v': 'Brána je otvorená pre vozidlá',
-    'closed': 'Brána je zatvorená',
-    'not_closed': 'Nie je zatvorená',
-    'opening_p': 'Otvára sa brána pre chodcov',
-    'opening_v': 'Otvára sa brána pre vozidlá',
-    'closing': 'Zatvára sa brána',
-  }
-
-  const access_token = Cookies.get('auth_token');
-
-  useEffect(() => {
-    setGateStateDisplay(GATE_STATES[gateState]);
-  }, [gateState]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
-  useEffect(() => { 
-    const ws = new WebSocket(`wss://${process.env.REACT_APP_SERVER_DOMAIN}/ws/gate/?token=${access_token}`);
-
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log(message);
-      if (message.type === 'status') {
-        setGateState(message.message);
-      }
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, []);
 
   /*
   'sm': '640px', // => @media (min-width: 640px) { ... }
@@ -66,6 +31,7 @@ return (
         <SlideOutMenu 
             isMenuOpen={isMenuOpen} 
             toggleMenu={toggleMenu} 
+            onLogOut={onLogOut}
         />
 
         {/* Main Content */}
@@ -82,7 +48,7 @@ return (
             {/* Gate Control Buttons */}
             <div className="space-y-4">
                 <button
-                    onClick={() => setGateStateDisplay('Vehicle Gate Opening')}
+                    onClick={() => sendTrigger('start_v')}
                     className="w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between"
                 >
                     <div className="flex items-center">
@@ -96,7 +62,7 @@ return (
                 </button>
 
                 <button
-                    onClick={() => setGateStateDisplay('Pedestrian Gate Opening')}
+                    onClick={() => sendTrigger('start_p')}
                     className="w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between"
                 >
                     <div className="flex items-center">
@@ -110,7 +76,7 @@ return (
                 </button>
 
                 <button
-                    onClick={() => setGateStateDisplay('Gate Closed')}
+                    onClick={() => sendTrigger('stop')}
                     className="w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between"
                 >
                     <div className="flex items-center">

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { User, Lock } from 'lucide-react';
-import Cookies from 'js-cookie';
 import { useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 
@@ -35,8 +34,7 @@ const LoginPage = ({ onLogIn }) => {
           alert(data.detail);
           return;
         }
-        Cookies.set('auth_token', data.access, { expires: 7 });
-        onLogIn();
+        onLogIn(data.access);
         
         navigate(location.state ? location.state : '/');
       })

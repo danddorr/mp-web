@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Car, User, DoorClosed, Plus, Minus } from 'lucide-react';
-import Header from './header';
+import Header from './Header';
 
 const Counter = ({ icon: Icon, value, label, helperText }) => (
   <div className="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-lg p-6 flex flex-col items-center">
@@ -17,13 +17,13 @@ const Counter = ({ icon: Icon, value, label, helperText }) => (
   </div>
 );
 
-const TempAccessForm = () => {
+const TempAccessForm = ({ onLogOut, gateStateDisplay, sendTrigger }) => {
   const [activeTab, setActiveTab] = useState('license');
   const [licensePlate, setLicensePlate] = useState('');
 
   return (
     <div className="w-screen h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black overflow-y-auto text-white">
-      <Header/>
+      <Header onLogOut={onLogOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} />
       <div className="max-w-2xl mx-auto bg-gray-800/30 backdrop-blur rounded-lg border border-transparent md:border-gray-700 shadow-xl p-4 m-4">
 
         <h1 className="text-3xl font-bold text-white text-center mb-2 mt-8">
