@@ -17,6 +17,7 @@ function App() {
   const [gateStateDisplay, setGateStateDisplay] = useState('');
   const [gateState, setGateState] = useState('unknown');
   let ws = null;
+  let timeout = 250;
 
   const GATE_STATES = {
     'open_p': 'Brána je otvorená pre chodcov',
@@ -38,8 +39,15 @@ function App() {
       return;
     }
 
-    ws = new WebSocket(`wss://${process.env.REACT_APP_SERVER_DOMAIN}/ws/gate/?token=${authToken}`);
+    connectWebsocket();
 
+    return () => {
+      ws.close();
+    };
+  }, [authToken]);
+
+  function connectWebsocket() {
+    ws = new WebSocket(`wss://${process.env.REACT_APP_SERVER_DOMAIN}/ws/gate/?token=${authToken}`);
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
       console.log(message);
@@ -48,14 +56,19 @@ function App() {
       }
     };
 
-    return () => {
-      ws.close();
+    ws.onopen = function() {
+      timeout = 250;
     };
-  }, [authToken]);
+
+    ws.onclose = function(e) {
+      console.log(`Socket is closed. Reconnect will be attempted in ${timeout}ms.`, e.reason);
+      setTimeout(connectWebsocket, Math.min(10000,timeout+=timeout))
+    };
+  }
 
   function sendTrigger(trigger) {
     console.log('Sending trigger:', trigger);
-    if (!ws) {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
       console.error('WebSocket is not open');
       return;
     }
