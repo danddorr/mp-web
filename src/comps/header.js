@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Menu, Car, User, X } from 'lucide-react';
 import SlideOutMenu from './Menu';
 
-const Header = ({ onLogOut, gateStateDisplay, sendTrigger }) => {
+const Header = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -10,7 +10,7 @@ const Header = ({ onLogOut, gateStateDisplay, sendTrigger }) => {
     };
 
   return (
-    <header className="bg-gray-900 border-b border-gray-800 p-4 sticky top-0 bottom-0 z-10">
+    <header className="bg-gray-900 w-auto border-b border-gray-800 p-4 sticky top-0 bottom-0 z-10">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between">
           {/* Left side - Menu and Status */}
@@ -65,7 +65,7 @@ const Header = ({ onLogOut, gateStateDisplay, sendTrigger }) => {
           </div>
         </div>
       </div>
-      <SlideOutMenu isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} onLogOut={onLogOut} />
+      <SlideOutMenu isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} onLogOut={onLogOut} generalInfo={generalInfo}/>
     </header>
     
   );

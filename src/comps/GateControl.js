@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Menu, Car, UserCircle2, Lock } from 'lucide-react';
 import SlideOutMenu from './Menu';
 
-const GateControlApp = ({ gateStateDisplay, sendTrigger, onLogOut }) => {
+const GateControlApp = ({ gateStateDisplay, sendTrigger, onLogOut, generalInfo }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -32,6 +32,7 @@ return (
             isMenuOpen={isMenuOpen} 
             toggleMenu={toggleMenu} 
             onLogOut={onLogOut}
+            generalInfo={generalInfo}
         />
 
         {/* Main Content */}

@@ -4,7 +4,9 @@ import LoginForm from './comps/LoginForm';
 import Dashboard from './comps/Dashboard'; // Assuming you have a Dashboard component
 import GateControlApp from './comps/GateControl';
 import LoginPage from './comps/LoginPage';
-import TempAccessForm from './comps/TempAccessForm';
+import TempAccessCreateForm from './comps/TempAccessCreate';
+import TempAccessEditForm from './comps/TempAccessEdit';
+import TempAccess from './comps/TempAccess';
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { Navigate } from 'react-router-dom';
@@ -16,18 +18,19 @@ function App() {
   );
   const [gateStateDisplay, setGateStateDisplay] = useState('');
   const [gateState, setGateState] = useState('unknown');
+  const [generalInfo, setGeneralInfo] = useState({});
   let ws = null;
   let timeout = 250;
 
   const GATE_STATES = {
-    'open_p': 'Brána je otvorená pre chodcov',
-    'open_v': 'Brána je otvorená pre vozidlá',
-    'closed': 'Brána je zatvorená',
-    'not_closed': 'Nie je zatvorená',
-    'opening_p': 'Otvára sa brána pre chodcov',
-    'opening_v': 'Otvára sa brána pre vozidlá',
-    'closing': 'Zatvára sa brána',
-    'unknown': '',
+    'open_p': 'Otvorené pre chodcov',
+    'open_v': 'Otvorené pre vozidlo',
+    'closed': 'Zatvorené',
+    'not_closed': 'Nie je zatvorené',
+    'opening_p': 'Otvára sa pre chodcov',
+    'opening_v': 'Otvára sa pre vozidlo',
+    'closing': 'Zatvára sa',
+    'unknown': 'Unknown',
   }
 
   useEffect(() => {
@@ -40,6 +43,17 @@ function App() {
     }
 
     connectWebsocket();
+
+    fetch(`https://${process.env.REACT_APP_SERVER_DOMAIN}/api/general-info/`, {
+      headers: {
+        'Authorization': `JWT ${authToken}`
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        setGeneralInfo({ ...data, authToken });
+        console.log(generalInfo);
+      });
 
     return () => {
       ws.close();
@@ -62,7 +76,10 @@ function App() {
 
     ws.onclose = function(e) {
       console.log(`Socket is closed. Reconnect will be attempted in ${timeout}ms.`, e.reason);
-      setTimeout(connectWebsocket, Math.min(10000,timeout+=timeout))
+      if (timeout < 10000) {
+        timeout += timeout;
+      }
+      setTimeout(connectWebsocket, timeout);
     };
   }
 
@@ -95,13 +112,21 @@ function App() {
           <Route path="/login" element={<LoginPage onLogIn={logIn} replace={true}/>} />
           <Route path="*" element={<Navigate to="/" replace={true} />} />
           <Route path="/" element={authToken 
-            ? <GateControlApp onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger}/> 
+            ? <GateControlApp onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
             : <Navigate to='/login' state={"/"}/>
           }/>
-          <Route path="/temp-access" element={authToken 
-            ? <TempAccessForm onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger}/> 
+          <Route path="/temp-access/create" element={authToken 
+            ? <TempAccessCreateForm onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
             : <Navigate to='/login'  state={"/temp-access"}/>
           } />
+          <Route path="/temp-access/edit" element={authToken 
+            ? <TempAccessEditForm onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
+            : <Navigate to='/login'  state={"/temp-access"}/>
+          } />
+          <Route path="/temp-access" element={authToken 
+            ? <TempAccess onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
+            : <Navigate to='/login' state={"/"}/>
+          }/>
         </Routes>
       </div>
     </Router>

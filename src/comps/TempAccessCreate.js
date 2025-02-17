@@ -1,32 +1,71 @@
-import React, { useState } from 'react';
-import { Car, User, DoorClosed, Plus, Minus } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Car, User, DoorClosed, X } from 'lucide-react';
 import Header from './Header';
+import Counter from './Counter';
 
-const Counter = ({ icon: Icon, value, label, helperText }) => (
-  <div className="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-lg p-6 flex flex-col items-center">
-    <Icon className="w-6 h-6 mb-2 text-white" />
-    <button className="hover:bg-blue-500/20 hover:shadow-lg hover:shadow-blue-500/20 p-2 rounded-lg transition-all">
-      <Plus className="w-5 h-5 text-white" />
-    </button>
-    <div className="text-2xl font-bold my-2 text-white">{value}</div>
-    <button className="hover:bg-blue-500/20 hover:shadow-lg hover:shadow-blue-500/20 p-2 rounded-lg transition-all">
-      <Minus className="w-5 h-5 text-white" />
-    </button>
-    <div className="text-sm text-gray-300 text-center mt-2">{label}</div>
-    <div className="text-xs text-gray-400 text-center mt-1">{helperText}</div>
-  </div>
-);
-
-const TempAccessForm = ({ onLogOut, gateStateDisplay, sendTrigger }) => {
+const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('license');
   const [licensePlate, setLicensePlate] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [openVehicle, setOpenVehicle] = useState(0);
+  const [openPedestrian, setOpenPedestrian] = useState(0);
+  const [closeGate, setCloseGate] = useState(0);
+  const [canOpenVehicle, setCanOpenVehicle] = useState(false);
+  const [canOpenPedestrian, setCanOpenPedestrian] = useState(false);
+  const [canCloseGate, setCanCloseGate] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(() => {
+    if (generalInfo.user) {
+      setCanOpenVehicle(generalInfo.user.can_open_vehicle);
+      setCanOpenPedestrian(generalInfo.user.can_open_pedestrian);
+      setCanCloseGate(generalInfo.user.can_close_gate);
+      setIsAdmin(generalInfo.user.is_admin);
+    }
+  }, [generalInfo]);
+
+  const handleSubmit = () => {
+    const data = {
+      access_type: activeTab === 'license' ? 'ecv' : 'link',
+      ecv: activeTab === 'license' ? licensePlate : undefined,
+      valid_from: startDate,
+      valid_until: endDate,
+      open_vehicle: openVehicle,
+      open_pedestrian: openPedestrian,
+      close_gate: closeGate,
+    };
+
+    fetch(`https://${process.env.REACT_APP_SERVER_DOMAIN}/api/temporary-access/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `JWT ${generalInfo.authToken}`
+      },
+      body: JSON.stringify(data),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  };
 
   return (
     <div className="w-screen h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black overflow-y-auto text-white">
-      <Header onLogOut={onLogOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} />
-      <div className="max-w-2xl mx-auto bg-gray-800/30 backdrop-blur rounded-lg border border-transparent md:border-gray-700 shadow-xl p-4 m-4">
-
-        <h1 className="text-3xl font-bold text-white text-center mb-2 mt-8">
+      <Header onLogOut={onLogOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/>
+      <div className="max-w-2xl mx-auto md:mt-4 md:mb-4 bg-gray-800/30 backdrop-blur rounded-lg border border-transparent md:border-gray-700 shadow-xl p-4">
+        <div className="flex items-center">
+          <button className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
+                  onClick={() => navigate('/temp-access') }>
+            <X className="w-6 h-6 text-white" />
+          </button>
+        </div>
+        <h1 className="text-3xl font-bold text-white text-center mb-2">
           Create Temporary Access
         </h1>
         <p className="text-gray-400 text-center mb-12">
@@ -86,6 +125,8 @@ const TempAccessForm = ({ onLogOut, gateStateDisplay, sendTrigger }) => {
             </label>
             <input
               type="datetime-local"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
               className="w-full p-3 bg-gray-800/50 border border-gray-600 text-white rounded-lg 
                        focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 
                        hover:border-gray-500 transition-colors"
@@ -97,6 +138,8 @@ const TempAccessForm = ({ onLogOut, gateStateDisplay, sendTrigger }) => {
             </label>
             <input
               type="datetime-local"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
               className="w-full p-3 bg-gray-800/50 border border-gray-600 text-white rounded-lg 
                        focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 
                        hover:border-gray-500 transition-colors"
@@ -107,21 +150,33 @@ const TempAccessForm = ({ onLogOut, gateStateDisplay, sendTrigger }) => {
         <div className="grid grid-cols-3 gap-4 mb-8">
           <Counter
             icon={Car}
-            value={0}
+            value={openVehicle}
             label="Vehicle Access"
             helperText="Number of vehicles allowed"
+            onIncrement={() => setOpenVehicle(openVehicle + 1)}
+            onDecrement={() => setOpenVehicle(openVehicle - 1)}
+            canModify={canOpenVehicle}
+            isAdmin={isAdmin}
           />
           <Counter
             icon={User}
-            value={0}
+            value={openPedestrian}
             label="Pedestrian Access"
             helperText="Number of people allowed"
+            onIncrement={() => setOpenPedestrian(openPedestrian + 1)}
+            onDecrement={() => setOpenPedestrian(openPedestrian - 1)}
+            canModify={canOpenPedestrian}
+            isAdmin={isAdmin}
           />
           <Counter
             icon={DoorClosed}
-            value={0}
+            value={closeGate}
             label="Close Gate"
             helperText="Auto-close after entries"
+            onIncrement={() => setCloseGate(closeGate + 1)}
+            onDecrement={() => setCloseGate(closeGate - 1)}
+            canModify={canCloseGate}
+            isAdmin={isAdmin}
           />
         </div>
 
@@ -130,9 +185,12 @@ const TempAccessForm = ({ onLogOut, gateStateDisplay, sendTrigger }) => {
           close after the specified number of entries.
         </p>
 
-        <button className="w-full bg-blue-600 hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/20 
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-blue-600 hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/20 
                          text-white font-bold py-4 px-8 rounded-lg text-lg 
-                         transition-all duration-200 transform hover:scale-[1.02]">
+                         transition-all duration-200 transform hover:scale-[1.02]"
+        >
           Create Temporary Access
         </button>
       </div>
@@ -140,4 +198,4 @@ const TempAccessForm = ({ onLogOut, gateStateDisplay, sendTrigger }) => {
   );
 };
 
-export default TempAccessForm;
+export default TempAccessCreateForm;

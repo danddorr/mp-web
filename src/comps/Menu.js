@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, User, Clock, Car, Link2, Settings, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 
-const SlideOutMenu = ({ isMenuOpen, toggleMenu, onLogOut }) => {
+const SlideOutMenu = ({ isMenuOpen, toggleMenu, onLogOut, generalInfo }) => {
+  const [user, setUser] = useState('');
   const navigate = useNavigate();
   function redirectToTempAccess() { navigate('/temp-access'); }
   function redirectToGateControl() { navigate('/'); }
+
+  useEffect(() => {
+    setUser(generalInfo.user);
+  }, [generalInfo]);
     
   return (
-    <div className={`fixed z-20 inset-y-0 left-0 w-64 bg-gray-900 transform transition-transform ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+    <div className={`fixed z-20 inset-y-0 left-0 w-64 bg-gray-900 text-white transform transition-transform ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
       <div className="p-4">
         <button onClick={toggleMenu} className="absolute right-4 top-4 p-2 hover:bg-gray-800 rounded-lg">
           <X className="w-6 h-6" />
@@ -18,7 +23,7 @@ const SlideOutMenu = ({ isMenuOpen, toggleMenu, onLogOut }) => {
         {/* User Info */}
         <button className="flex items-center space-x-3 mb-8 mt-8">
           <User className="w-8 h-8" />
-          <span className="text-lg font-semibold">John Doe</span>
+          <span className="text-lg font-semibold">{user ? user.username : '' }</span>
         </button>
 
         {/* Menu Items */}
