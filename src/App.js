@@ -1,7 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginForm from './comps/LoginForm';
-import Dashboard from './comps/Dashboard'; // Assuming you have a Dashboard component
 import GateControlApp from './comps/GateControl';
 import LoginPage from './comps/LoginPage';
 import TempAccessCreateForm from './comps/TempAccessCreate';
@@ -107,8 +105,6 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/login-old" element={<LoginForm />} />
           <Route path="/login" element={<LoginPage onLogIn={logIn} replace={true}/>} />
           <Route path="*" element={<Navigate to="/" replace={true} />} />
           <Route path="/" element={authToken 
@@ -125,7 +121,7 @@ function App() {
           } />
           <Route path="/temp-access" element={authToken 
             ? <TempAccess onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
-            : <Navigate to='/login' state={"/"}/>
+            : <Navigate to='/login' state={"/temp-access"}/>
           }/>
         </Routes>
       </div>

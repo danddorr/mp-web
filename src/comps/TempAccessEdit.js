@@ -53,20 +53,31 @@ const TempAccessEditForm = ({ onLogOut, gateStateDisplay, sendTrigger, generalIn
     };
 
     fetch(`https://${process.env.REACT_APP_SERVER_DOMAIN}/api/temporary-access/${prefill.link}/`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `JWT ${generalInfo.authToken}`
       },
       body: JSON.stringify(data),
     })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
+    .then(response => 
+      response.json().then(data => {
+        if (!response.ok) {
+          if (response.status === 400) {
+            alert(JSON.stringify(data));
+          }
+          return Promise.reject(data);
+        }
+        return data;
       })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+    )
+    .then(data => {
+      console.log('Success:', data);
+      navigate('/temp-access');
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
   };
 
   const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));

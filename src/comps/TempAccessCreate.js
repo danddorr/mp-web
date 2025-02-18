@@ -46,9 +46,20 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
       },
       body: JSON.stringify(data),
     })
-      .then(response => response.json())
+      .then(response => 
+        response.json().then(data => {
+          if (!response.ok) {
+            if (response.status === 400) {
+              alert(JSON.stringify(data));
+            }
+            return Promise.reject(data);
+          }
+          return data;
+        })
+      )
       .then(data => {
         console.log('Success:', data);
+        navigate('/temp-access');
       })
       .catch((error) => {
         console.error('Error:', error);
