@@ -127,6 +127,7 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
                       <>
                         <button 
                           onClick={() => navigator.clipboard.writeText(`${window.location.origin}/${entry.link}`)}
+                          title={`${window.location.origin}/${entry.link}`}
                           className="flex items-center text-xl font-bold text-white gap-1 hover:bg-green-600/20 p-2 -m-2 rounded-lg transition-colors"
                         >
                           <Link2 className="mr-2 text-green-400" />

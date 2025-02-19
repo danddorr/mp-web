@@ -1,14 +1,13 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import GateControlApp from './comps/GateControl';
+import TempGateControl from './comps/TempGateControl';
 import LoginPage from './comps/LoginPage';
 import TempAccessCreateForm from './comps/TempAccessCreate';
 import TempAccessEditForm from './comps/TempAccessEdit';
 import TempAccess from './comps/TempAccess';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Cookies from 'js-cookie';
-import { Navigate } from 'react-router-dom';
-
 
 function App() {
   const [authToken, setAuthToken] = useState(
@@ -16,8 +15,9 @@ function App() {
   );
   const [gateStateDisplay, setGateStateDisplay] = useState('');
   const [gateState, setGateState] = useState('unknown');
+  const [lastWsMessage, setLastWsMessage] = useState('');
   const [generalInfo, setGeneralInfo] = useState({});
-  let ws = null;
+  let ws = useRef(null);
   let timeout = 250;
 
   const GATE_STATES = {
@@ -37,10 +37,16 @@ function App() {
   
   useEffect(() => {
     if (!authToken) {
+      if (window.location.href.split('/').slice(-2, -1)[0] === 'guest') {
+        connectWebsocket('', window.location.href.split('/').pop());
+        return () => {
+          ws.current.close();
+        };
+      }
       return;
     }
 
-    connectWebsocket();
+    connectWebsocket(authToken);
 
     fetch(`https://${process.env.REACT_APP_SERVER_DOMAIN}/api/general-info/`, {
       headers: {
@@ -54,13 +60,14 @@ function App() {
       });
 
     return () => {
-      ws.close();
+      ws.current.close();
     };
   }, [authToken]);
 
-  function connectWebsocket() {
-    ws = new WebSocket(`wss://${process.env.REACT_APP_SERVER_DOMAIN}/ws/gate/?token=${authToken}`);
-    ws.onmessage = (event) => {
+  function connectWebsocket(authToken='', temp_access_link='') {
+    const connectionString = `wss://${process.env.REACT_APP_SERVER_DOMAIN}/ws/gate/?` + (authToken ? `token=${authToken}` : `temp_access_link=${temp_access_link}`);
+    ws.current = new WebSocket(connectionString);
+    ws.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
       console.log(message);
       if (message.type === 'status') {
@@ -68,14 +75,19 @@ function App() {
       }
     };
 
-    ws.onopen = function() {
+    ws.current.onopen = function() {
       timeout = 250;
     };
 
-    ws.onclose = function(e) {
+    ws.current.onclose = function(e) {
       console.log(`Socket is closed. Reconnect will be attempted in ${timeout}ms.`, e.reason);
       if (timeout < 10000) {
         timeout += timeout;
+      }
+      if (window.location.href.split('/').slice(-2, -1)[0] === 'guest') {
+        setTimeout(() => {connectWebsocket('', window.location.href.split('/').pop())}, timeout);
+      } else {
+        setTimeout(() => {connectWebsocket(authToken)}, timeout);
       }
       setTimeout(connectWebsocket, timeout);
     };
@@ -83,11 +95,12 @@ function App() {
 
   function sendTrigger(trigger) {
     console.log('Sending trigger:', trigger);
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
+    console.log(ws.current);
+    if (!ws.current || ws.current.readyState !== WebSocket.OPEN) {
       console.error('WebSocket is not open');
       return;
     }
-    ws.send(JSON.stringify({ type: 'trigger', message: trigger }));
+    ws.current.send(JSON.stringify({ type: 'trigger', message: trigger }));
   }
 
   const logIn = (auth_token) => {
@@ -106,6 +119,7 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/login" element={<LoginPage onLogIn={logIn} replace={true}/>} />
+          <Route path="/guest/:accesslink" element={<TempGateControl gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} />} />
           <Route path="*" element={<Navigate to="/" replace={true} />} />
           <Route path="/" element={authToken 
             ? <GateControlApp onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
@@ -122,7 +136,7 @@ function App() {
           <Route path="/temp-access" element={authToken 
             ? <TempAccess onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
             : <Navigate to='/login' state={"/temp-access"}/>
-          }/>
+          } />
         </Routes>
       </div>
     </Router>
