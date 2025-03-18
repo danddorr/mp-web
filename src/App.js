@@ -46,8 +46,6 @@ function App() {
       return;
     }
 
-    connectWebsocket(authToken);
-
     fetch(`https://${process.env.REACT_APP_SERVER_DOMAIN}/api/general-info/`, {
       headers: {
         'Authorization': `JWT ${authToken}`
@@ -56,8 +54,11 @@ function App() {
       .then(response => response.json())
       .then(data => {
         setGeneralInfo({ ...data, authToken });
+        setGateState(data.gate_state);
         console.log(generalInfo);
       });
+
+    connectWebsocket(authToken);
 
     return () => {
       ws.current.close();
@@ -65,7 +66,16 @@ function App() {
   }, [authToken]);
 
   function connectWebsocket(authToken='', temp_access_link='') {
-    const connectionString = `wss://${process.env.REACT_APP_SERVER_DOMAIN}/ws/gate/?` + (authToken ? `token=${authToken}` : `temp_access_link=${temp_access_link}`);
+    let connectionString = '';
+    if (authToken) {
+      connectionString = `wss://${process.env.REACT_APP_SERVER_DOMAIN}/ws/gate/?token=${authToken}`;
+    } else if (temp_access_link) {
+      connectionString = `wss://${process.env.REACT_APP_SERVER_DOMAIN}/ws/gate/?temp_access_link=${temp_access_link}`;
+    } else {
+      console.error('No auth token or temp access link provided');
+      return;
+    }
+
     ws.current = new WebSocket(connectionString);
     ws.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
@@ -89,7 +99,6 @@ function App() {
       } else {
         setTimeout(() => {connectWebsocket(authToken)}, timeout);
       }
-      setTimeout(connectWebsocket, timeout);
     };
   }
 

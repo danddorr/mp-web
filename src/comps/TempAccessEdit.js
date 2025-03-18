@@ -80,8 +80,7 @@ const TempAccessEditForm = ({ onLogOut, gateStateDisplay, sendTrigger, generalIn
     });
   };
 
-  const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-  const accessLink = `${baseUrl}/${prefill.link}`;
+  const accessLink = window.location.origin + "/guest/" + prefill.link;
 
   return (
     <div className="w-screen h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black overflow-y-auto text-white">

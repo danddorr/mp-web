@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
-import { Menu, Car, UserCircle2, Lock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Menu, Car, UserCircle2, Lock, Infinity } from 'lucide-react';
 import SlideOutMenu from './Menu';
 
 const GateControlApp = ({ gateStateDisplay, sendTrigger, onLogOut, generalInfo }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  /*
-  'sm': '640px', // => @media (min-width: 640px) { ... }
-  'md': '768px', // => @media (min-width: 768px) { ... }
-  'lg': '1024px', // => @media (min-width: 1024px) { ... }
-  'xl': '1280px', // => @media (min-width: 1280px) { ... }
-  '2xl': '1536px', // => @media (min-width: 1536px) { ... }
-  */
+
+    /*
+    'sm': '640px', // => @media (min-width: 640px) { ... }
+    'md': '768px', // => @media (min-width: 768px) { ... }
+    'lg': '1024px', // => @media (min-width: 1024px) { ... }
+    'xl': '1280px', // => @media (min-width: 1280px) { ... }
+    '2xl': '1536px', // => @media (min-width: 1536px) { ... }
+    */
 
 return (
     <div className="min-h-screen w-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white">
@@ -50,7 +51,8 @@ return (
             <div className="space-y-4">
                 <button
                     onClick={() => sendTrigger('start_v')}
-                    className="w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between"
+                    className={`w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between ${!generalInfo?.user?.can_open_vehicle && 'opacity-50'}`}
+                    disabled={!generalInfo?.user?.can_open_vehicle}
                 >
                     <div className="flex items-center">
                         <Car className="w-8 h-8 mr-4" />
@@ -59,12 +61,13 @@ return (
                             <span className="text-sm text-gray-400">For vehicles</span>
                         </div>
                     </div>
-                    <Lock className="w-6 h-6" />
+                    { !generalInfo?.user?.can_open_vehicle && <Lock className="w-6 h-6" />}
                 </button>
 
                 <button
                     onClick={() => sendTrigger('start_p')}
-                    className="w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between"
+                    className={`w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between ${!generalInfo?.user?.can_open_pedestrian && 'opacity-50'}`}
+                    disabled={!generalInfo?.user?.can_open_pedestrian}
                 >
                     <div className="flex items-center">
                         <UserCircle2 className="w-8 h-8 mr-4" />
@@ -73,12 +76,13 @@ return (
                             <span className="text-sm text-gray-400">For pedestrians</span>
                         </div>
                     </div>
-                    <Lock className="w-6 h-6" />
+                    { !generalInfo?.user?.can_open_pedestrian && <Lock className="w-6 h-6" />}
                 </button>
 
                 <button
                     onClick={() => sendTrigger('stop')}
-                    className="w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between"
+                    className={`w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between ${!generalInfo?.user?.can_close_gate && 'opacity-50'}`}
+                    disabled={!generalInfo?.user?.can_close_gate}      
                 >
                     <div className="flex items-center">
                         <Lock className="w-8 h-8 mr-4" />
@@ -87,7 +91,7 @@ return (
                             <span className="text-sm text-gray-400">All access points</span>
                         </div>
                     </div>
-                    <Lock className="w-6 h-6" />
+                    { !generalInfo?.user?.can_close_gate && <Lock className="w-6 h-6" />}
                 </button>
             </div>
         </main>

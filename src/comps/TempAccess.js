@@ -52,6 +52,22 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
       navigate('/temp-access/edit', { state: { prefill: tempAccess } });
     }
 
+    function deleteTemporaryAccess(tempAccess) {  
+      fetch(`https://${process.env.REACT_APP_SERVER_DOMAIN}/api/temporary-access/${tempAccess.link}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `JWT ${generalInfo.authToken}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        setAccessEntries(accessEntries.filter(entry => entry.link !== tempAccess.link));
+      })
+      .catch(err => console.error(err));
+    }
+
     return (
       <div className="h-screen w-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white overflow-y-auto overflow-x-hidden">
         <Header onLogOut={onLogOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/>
@@ -126,8 +142,8 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
                     ) : (
                       <>
                         <button 
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/${entry.link}`)}
-                          title={`${window.location.origin}/${entry.link}`}
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/guest/${entry.link}`)}
+                          title={`${window.location.origin}/guest/${entry.link}`}
                           className="flex items-center text-xl font-bold text-white gap-1 hover:bg-green-600/20 p-2 -m-2 rounded-lg transition-colors"
                         >
                           <Link2 className="mr-2 text-green-400" />
@@ -180,7 +196,8 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
                             onClick={() => editTemporaryAccess(entry)}>
                       <Edit2 className="w-4 h-4" />
                     </button>
-                    <button className="text-red-400 hover:bg-red-600/20 p-2 rounded-lg">
+                    <button className="text-red-400 hover:bg-red-600/20 p-2 rounded-lg"
+                            onClick={() => deleteTemporaryAccess(entry)}>
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>

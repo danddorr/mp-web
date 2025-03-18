@@ -51,7 +51,8 @@ return (
             <div className="space-y-4">
                 <button
                     onClick={() => {if (accessInfo.open_vehicle !== 0) sendTrigger('start_v')}}
-                    className="w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between"
+                    className={`w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between ${accessInfo.open_vehicle === 0 && 'opacity-50'}`}
+                    disabled={accessInfo.open_vehicle === 0}
                 >
                     <div className="flex items-center">
                         <Car className="w-8 h-8 mr-4" />
@@ -70,7 +71,8 @@ return (
 
                 <button
                     onClick={() => {if (accessInfo.open_pedestrian !== 0) sendTrigger('start_p')}}
-                    className="w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between"
+                    className={`w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between ${accessInfo.open_pedestrian === 0 && 'opacity-50'}`}
+                    disabled={accessInfo.open_pedestrian === 0}
                 >
                     <div className="flex items-center">
                         <UserCircle2 className="w-8 h-8 mr-4" />
@@ -89,7 +91,8 @@ return (
 
                 <button
                     onClick={() => {if (accessInfo.close_gate !== 0) sendTrigger('stop')}}
-                    className="w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between"
+                    className={`w-full relative bg-gray-800 rounded-lg overflow-hidden group hover:bg-gray-700 transition-colors p-6 flex items-center justify-between ${accessInfo.close_gate === 0 && 'opacity-50'}`}
+                    disabled={accessInfo.close_gate === 0}
                 >
                     <div className="flex items-center">
                         <Lock className="w-8 h-8 mr-4" />
