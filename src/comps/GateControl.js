@@ -1,10 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, Car, UserCircle2, Lock, Infinity, CheckCircle } from 'lucide-react';
+import { Menu, Car, UserCircle2, Lock, Infinity, CheckCircle, ChevronRight, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import SlideOutMenu from './Menu';
 
 const GateControlApp = ({ gateStateDisplay, sendTrigger, onLogOut, generalInfo }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [actionFeedback, setActionFeedback] = useState(null);
+    const [parkingStats, setParkingStats] = useState(null);
+    const [loadingStats, setLoadingStats] = useState(true);
+
+    useEffect(() => {
+        if (generalInfo?.authToken) {
+            fetchParkingStats();
+        }
+    }, [generalInfo?.authToken]);
+
+    const fetchParkingStats = () => {
+        fetch(`${process.env.REACT_APP_API_DOMAIN}/api/parking/statistics/`, {
+            headers: {
+                'Authorization': `JWT ${generalInfo.authToken}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                setParkingStats(data);
+                setLoadingStats(false);
+            })
+            .catch(err => {
+                console.error('Error fetching parking statistics:', err);
+                setLoadingStats(false);
+            });
+    };
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -34,6 +60,23 @@ const GateControlApp = ({ gateStateDisplay, sendTrigger, onLogOut, generalInfo }
         if (gateStateDisplay.includes('Zatv')) return 'bg-yellow-600';
         return 'bg-gray-600';
     };
+
+    // Get the capacity status
+    const getCapacityStatus = () => {
+        if (!parkingStats) return { text: 'Načítavam...', color: 'bg-gray-600' };
+        
+        const percentage = (parkingStats.current_parked / 20) * 100;
+        
+        if (percentage < 50) {
+            return { text: 'Voľné', color: 'bg-green-600' };
+        } else if (percentage < 90) {
+            return { text: 'Obsadzujúce sa', color: 'bg-yellow-600' };
+        } else {
+            return { text: 'Takmer plné', color: 'bg-red-600' };
+        }
+    };
+
+    const capacityStatus = getCapacityStatus();
 
 return (
     <div className="min-h-screen w-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white">
@@ -133,8 +176,50 @@ return (
                     </div>
                     {!generalInfo?.user?.can_open_pedestrian && <Lock className="w-5 h-5 text-gray-400" />}
                 </button>
-
+            </div>
+            
+            {/* Parking Overview Quick Summary */}
+            <div className="mt-8">
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold flex items-center">
+                        <Car className="w-5 h-5 mr-2" />
+                        Stav parkoviska
+                    </h3>
+                    <Link to="/parking" className="flex items-center text-blue-400 hover:text-blue-300 transition-colors">
+                        <span className="mr-1">Podrobný prehľad</span>
+                        <ExternalLink className="w-4 h-4" />
+                    </Link>
+                </div>
                 
+                {loadingStats ? (
+                    <div className="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-lg p-8 flex justify-center">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                    </div>
+                ) : (
+                    <div className="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-lg p-5">
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center">
+                                <div className={`w-3 h-3 rounded-full ${capacityStatus.color} mr-2`}></div>
+                                <span className="font-medium">{capacityStatus.text}</span>
+                            </div>
+                            <div className="text-xl font-bold">
+                                {parkingStats?.current_parked || 0} <span className="text-gray-400 text-sm">/ 20</span>
+                            </div>
+                        </div>
+                        
+                        <div className="w-full bg-gray-700 h-2 rounded-full mt-3">
+                            <div 
+                                className={`${capacityStatus.color} h-2 rounded-full transition-all duration-500`} 
+                                style={{ width: `${Math.min(100, ((parkingStats?.current_parked || 0) / 20) * 100)}%` }}
+                            ></div>
+                        </div>
+                        
+                        <div className="flex justify-between mt-4 text-sm">
+                            <span className="text-gray-400">Obsadenosť {Math.round((parkingStats?.current_parked || 0) / 20 * 100)}%</span>
+                            <span className="text-gray-400">Dnes návštev: {parkingStats?.daily_stats && Object.values(parkingStats.daily_stats).pop() || 0}</span>
+                        </div>
+                    </div>
+                )}
             </div>
         </main>
     </div>
