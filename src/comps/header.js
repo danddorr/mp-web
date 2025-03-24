@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { User, LogOut, Menu as MenuIcon } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { User, LogOut, Menu as MenuIcon, Columns3 } from 'lucide-react';
 import SlideOutMenu from './Menu';
 
 const Header = ({ onLogOut, gateStateDisplay, generalInfo }) => {
@@ -8,7 +7,6 @@ const Header = ({ onLogOut, gateStateDisplay, generalInfo }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState('');
   const dropdownRef = useRef(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     setUser(generalInfo?.user || '');
@@ -43,13 +41,15 @@ const Header = ({ onLogOut, gateStateDisplay, generalInfo }) => {
             >
               <MenuIcon className="w-6 h-6" />
             </button>
-            
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">Stav:</span>
+            {window.location.origin+"/" !== window.location.href && (
+              <div className="flex items-center gap-2">
+              <Columns3 className="w-5 h-5 text-gray-400" />
               <span className={`px-2 py-1 rounded-full text-xs font-medium text-white`}>
                 {gateStateDisplay}
               </span>
             </div>
+            )}
+            
           </div>
 
           {/* Right side - User dropdown */}

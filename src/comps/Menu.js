@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, History, Car, Key, ParkingCircle, Settings, Home } from 'lucide-react';
+import { X, History, Car, Key, ParkingCircle, Columns3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const SlideOutMenu = ({ isMenuOpen, toggleMenu }) => {
@@ -20,7 +20,7 @@ const SlideOutMenu = ({ isMenuOpen, toggleMenu }) => {
         {/* Menu Items */}
         <nav className="space-y-4 mt-12">
           <button onClick={() => {handleNavigate("/");}} className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
-            <Home className="w-5 h-5" />
+            <Columns3 className="w-5 h-5" />
             <span>Ovládanie brány</span>
           </button>
           <button onClick={() => {handleNavigate("/parking");}} className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
@@ -38,10 +38,6 @@ const SlideOutMenu = ({ isMenuOpen, toggleMenu }) => {
           <button className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
             <Car className="w-5 h-5" />
             <span>Spravovať ŠPZ</span>
-          </button>
-          <button className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
-            <Settings className="w-5 h-5" />
-            <span>Nastavenia</span>
           </button>
         </nav>
       </div>

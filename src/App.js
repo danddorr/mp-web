@@ -127,16 +127,11 @@ function App() {
     Cookies.remove('auth_token');
     window.location.href = '/login';
   };
-  
-  const handleLogOut = () => {
-    // Your logout logic here
-    console.log('Logging out...');
-  };
 
   return (
     <Router>
       <div className="App min-h-screen flex flex-col text-white">
-        {authToken && (
+        {!window.location.href.includes("guest") && (
           <Header 
             onLogOut={logOut}
             gateStateDisplay={gateStateDisplay}
