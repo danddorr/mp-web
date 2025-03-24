@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car, User, DoorClosed, X } from 'lucide-react';
+import { Car, User, X } from 'lucide-react';
 import Header from './Header';
 import Counter from './Counter';
 
@@ -12,17 +12,14 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
   const [endDate, setEndDate] = useState('');
   const [openVehicle, setOpenVehicle] = useState(0);
   const [openPedestrian, setOpenPedestrian] = useState(0);
-  const [closeGate, setCloseGate] = useState(0);
   const [canOpenVehicle, setCanOpenVehicle] = useState(false);
   const [canOpenPedestrian, setCanOpenPedestrian] = useState(false);
-  const [canCloseGate, setCanCloseGate] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     if (generalInfo.user) {
       setCanOpenVehicle(generalInfo.user.can_open_vehicle);
       setCanOpenPedestrian(generalInfo.user.can_open_pedestrian);
-      setCanCloseGate(generalInfo.user.can_close_gate);
       setIsAdmin(generalInfo.user.is_admin);
     }
   }, [generalInfo]);
@@ -35,10 +32,9 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
       valid_until: endDate,
       open_vehicle: openVehicle,
       open_pedestrian: openPedestrian,
-      close_gate: closeGate,
     };
 
-    fetch(`https://${process.env.REACT_APP_SERVER_DOMAIN}/api/temporary-access/`, {
+    fetch(`${process.env.REACT_APP_API_DOMAIN}/api/temporary-access/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -77,10 +73,10 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
           </button>
         </div>
         <h1 className="text-3xl font-bold text-white text-center mb-2">
-          Create Temporary Access
+          Vytvoriť dočasný prístup
         </h1>
         <p className="text-gray-400 text-center mb-12">
-          Configure temporary access permissions for visitors
+          Nakonfigurujte dočasné prístupové povolenia pre návštevníkov
         </p>
 
         {/* Custom Tabs */}
@@ -94,7 +90,7 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
                   : 'text-gray-300 hover:bg-gray-700/50'
               }`}
             >
-              License Plate
+              ŠPZ
             </button>
             <button
               onClick={() => setActiveTab('link')}
@@ -104,7 +100,7 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
                   : 'text-gray-300 hover:bg-gray-700/50'
               }`}
             >
-              Temporary Link
+              Dočasný odkaz
             </button>
           </div>
         </div>
@@ -112,19 +108,19 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
         {activeTab === 'license' && (
           <div className="mb-8">
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Vehicle License Plate Number
+              Číslo ŠPZ vozidla
             </label>
             <input
               type="text"
               value={licensePlate}
               onChange={(e) => setLicensePlate(e.target.value)}
-              placeholder="Enter license plate number"
+              placeholder="Zadajte číslo ŠPZ"
               className="w-full p-3 bg-gray-800/50 border border-gray-600 text-white rounded-lg 
                        focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 
                        hover:border-gray-500 transition-colors placeholder-gray-400"
             />
             <p className="text-sm text-gray-400 mt-2">
-              Enter the vehicle's license plate number for temporary access authorization
+              Zadajte číslo ŠPZ vozidla pre dočasné povolenie prístupu
             </p>
           </div>
         )}
@@ -132,7 +128,7 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="space-y-2 w-full">
             <label className="block text-sm font-medium text-gray-300">
-              Start Date/Time
+              Dátum/čas začiatku
             </label>
             <input
               type="datetime-local"
@@ -145,7 +141,7 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
           </div>
           <div className="space-y-2 w-full">
             <label className="block text-sm font-medium text-gray-300">
-              End Date/Time
+              Dátum/čas konca
             </label>
             <input
               type="datetime-local"
@@ -158,12 +154,12 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 gap-4 mb-8">
           <Counter
             icon={Car}
             value={openVehicle}
-            label="Vehicle Access"
-            helperText="Number of vehicles allowed"
+            label="Prístup vozidla"
+            helperText="Počet povolených vozidiel"
             onIncrement={() => setOpenVehicle(openVehicle + 1)}
             onDecrement={() => setOpenVehicle(openVehicle - 1)}
             canModify={canOpenVehicle}
@@ -172,28 +168,17 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
           <Counter
             icon={User}
             value={openPedestrian}
-            label="Pedestrian Access"
-            helperText="Number of people allowed"
+            label="Prístup chodcov"
+            helperText="Počet povolených osôb"
             onIncrement={() => setOpenPedestrian(openPedestrian + 1)}
             onDecrement={() => setOpenPedestrian(openPedestrian - 1)}
             canModify={canOpenPedestrian}
             isAdmin={isAdmin}
           />
-          <Counter
-            icon={DoorClosed}
-            value={closeGate}
-            label="Close Gate"
-            helperText="Auto-close after entries"
-            onIncrement={() => setCloseGate(closeGate + 1)}
-            onDecrement={() => setCloseGate(closeGate - 1)}
-            canModify={canCloseGate}
-            isAdmin={isAdmin}
-          />
         </div>
 
         <p className="text-gray-400 italic text-center text-sm mb-8">
-          Set the number of entries allowed for each access type. Gates will automatically
-          close after the specified number of entries.
+          Nastavte počet povolených vstupov pre každý typ prístupu. 
         </p>
 
         <button
@@ -202,7 +187,7 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
                          text-white font-bold py-4 px-8 rounded-lg text-lg 
                          transition-all duration-200 transform hover:scale-[1.02]"
         >
-          Create Temporary Access
+          Vytvoriť dočasný prístup
         </button>
       </div>
     </div>

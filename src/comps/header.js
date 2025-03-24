@@ -24,7 +24,7 @@ const Header = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
             </button>
             
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">Status:</span>
+              <span className="text-sm text-gray-400">Stav:</span>
               <span className={`px-2 py-1 rounded-full text-xs font-medium text-white`}>
                 {gateStateDisplay}
               </span>
@@ -40,28 +40,20 @@ const Header = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
                        text-white rounded-lg transition-colors md:px-4"
             >
               <Car className="w-4 h-4" />
-              <span className="hidden md:inline">Vehicles</span>
+              <span className="hidden md:inline">Vozidlo</span>
             </button>
             
             <button
               onClick={() => sendTrigger('start_p')}
               aria-label="Open for pedestrians"
-              className="flex items-center gap-2 px-3 py-2 text-sm bg-blue-600 hover:bg-blue-500 
+              className="flex items-center gap-2 px-3 py-2 text-sm bg-green-600 hover:bg-green-500 
                        text-white rounded-lg transition-colors md:px-4"
             >
               <User className="w-4 h-4" />
-              <span className="hidden md:inline">Pedestrians</span>
+              <span className="hidden md:inline">Chodec</span>
             </button>
             
-            <button
-              onClick={() => sendTrigger('close')}
-              aria-label="Close gate"
-              className="flex items-center gap-2 px-3 py-2 text-sm bg-red-600 hover:bg-red-500 
-                       text-white rounded-lg transition-colors md:px-4"
-            >
-              <X className="w-4 h-4" />
-              <span className="hidden md:inline">Close</span>
-            </button>
+            
           </div>
         </div>
       </div>

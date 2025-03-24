@@ -20,7 +20,7 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
     
     useEffect(() => {
       console.log(generalInfo);
-        fetch(`https://${process.env.REACT_APP_SERVER_DOMAIN}/api/temporary-access/`, {
+        fetch(`${process.env.REACT_APP_API_DOMAIN}/api/temporary-access/`, {
           headers: {
             'Authorization': `JWT ${generalInfo.authToken}`
           }
@@ -53,7 +53,7 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
     }
 
     function deleteTemporaryAccess(tempAccess) {  
-      fetch(`https://${process.env.REACT_APP_SERVER_DOMAIN}/api/temporary-access/${tempAccess.link}/`, {
+      fetch(`${process.env.REACT_APP_API_DOMAIN}/api/temporary-access/${tempAccess.link}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `JWT ${generalInfo.authToken}`,
@@ -73,10 +73,10 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
         <Header onLogOut={onLogOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/>
         <div className="max-w-2xl mx-auto mt-0 mb-0 md:mt-4 md:mb-4 bg-gray-800/30 backdrop-blur rounded-lg border border-transparent md:border-gray-700 shadow-xl p-4">
           <h1 className="text-3xl font-bold text-white text-center mb-2 mt-8">
-            Temporary Access
+            Dočasný prístup
           </h1>
           <p className="text-gray-400 text-center mb-12">
-              Manage temporary access permissions for visitors
+              Spravujte dočasné prístupové povolenia pre návštevníkov
           </p>
           {/* Create Access Button */}
           <button 
@@ -85,7 +85,7 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
                        transition-colors text-lg font-bold"
             onClick={() => navigate('/temp-access/create') }
           >
-            <Plus className="mr-2" /> Create Temporary Access
+            <Plus className="mr-2" /> Vytvoriť dočasný prístup
           </button>
 
           {/* Filter Controls */}
@@ -96,9 +96,9 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
                 value={filters.accessType}
                 onChange={(e) => setFilters({...filters, accessType: e.target.value})}
               >
-                <option value="All">All Types</option>
+                <option value="All">Všetky typy</option>
                 <option value="link">Link</option>
-                <option value="ecv">License Plate</option>
+                <option value="ecv">ŠPZ</option>
               </select>
               <ChevronDown className="absolute right-3 top-3 text-gray-400" />
             </div>
@@ -109,11 +109,11 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
                 value={filters.status}
                 onChange={(e) => setFilters({...filters, status: e.target.value})}
               >
-                <option value="All">All Status</option>
-                <option value="Active">Active</option>
-                <option value="Expired">Expired</option>
-                <option value="Pending">Pending</option>
-                <option value="Revoked">Revoked</option>
+                <option value="All">Všetky stavy</option>
+                <option value="Active">Aktívne</option>
+                <option value="Expired">Vypršané</option>
+                <option value="Pending">Čakajúce</option>
+                <option value="Revoked">Zrušené</option>
               </select>
               <ChevronDown className="absolute right-3 top-3 text-gray-400" />
             </div>
@@ -147,7 +147,7 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
                           className="flex items-center text-xl font-bold text-white gap-1 hover:bg-green-600/20 p-2 -m-2 rounded-lg transition-colors"
                         >
                           <Link2 className="mr-2 text-green-400" />
-                          Copy link
+                          Skopírovať Link
                         </button>
                       </>
                     )}
@@ -155,12 +155,12 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     entry.status === 'Active' ? 'bg-green-600/20 text-green-400' : 'bg-gray-600/20 text-gray-400'
                   }`}>
-                    {entry.status}
+                    {entry.status === 'Active' ? 'Aktívne' : entry.status === 'Expired' ? 'Vypršané' : entry.status === 'Pending' ? 'Čakajúce' : 'Zrušené'}
                   </span>
                 </div>
 
                 <div className="text-sm text-gray-400 mb-3">
-                  Valid: {formatDate(entry.valid_from)} – {formatDate(entry.valid_until)}
+                  Platné: {formatDate(entry.valid_from)} – {formatDate(entry.valid_until)}
                 </div>
 
                 <div className="flex items-center justify-between mt-3">

@@ -18,7 +18,7 @@ const LoginPage = ({ onLogIn }) => {
       return;
     }
     
-    fetch(`https://${process.env.REACT_APP_SERVER_DOMAIN}/api/auth/jwt/create/`, {
+    fetch(`${process.env.REACT_APP_API_DOMAIN}/api/auth/jwt/create/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

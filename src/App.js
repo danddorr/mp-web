@@ -6,6 +6,8 @@ import LoginPage from './comps/LoginPage';
 import TempAccessCreateForm from './comps/TempAccessCreate';
 import TempAccessEditForm from './comps/TempAccessEdit';
 import TempAccess from './comps/TempAccess';
+import HistoryPage from './comps/HistoryPage';
+import ParkingOverview from './comps/ParkingOverview';
 import { useState, useEffect, useRef } from 'react';
 import Cookies from 'js-cookie';
 
@@ -46,7 +48,7 @@ function App() {
       return;
     }
 
-    fetch(`https://${process.env.REACT_APP_SERVER_DOMAIN}/api/general-info/`, {
+    fetch(`${process.env.REACT_APP_API_DOMAIN}/api/general-info/`, {
       headers: {
         'Authorization': `JWT ${authToken}`
       }
@@ -68,9 +70,9 @@ function App() {
   function connectWebsocket(authToken='', temp_access_link='') {
     let connectionString = '';
     if (authToken) {
-      connectionString = `wss://${process.env.REACT_APP_SERVER_DOMAIN}/ws/gate/?token=${authToken}`;
+      connectionString = `${process.env.REACT_APP_WS_DOMAIN}/ws/gate/?token=${authToken}`;
     } else if (temp_access_link) {
-      connectionString = `wss://${process.env.REACT_APP_SERVER_DOMAIN}/ws/gate/?temp_access_link=${temp_access_link}`;
+      connectionString = `${process.env.REACT_APP_WS_DOMAIN}/ws/gate/?temp_access_link=${temp_access_link}`;
     } else {
       console.error('No auth token or temp access link provided');
       return;
@@ -145,6 +147,14 @@ function App() {
           <Route path="/temp-access" element={authToken 
             ? <TempAccess onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
             : <Navigate to='/login' state={"/temp-access"}/>
+          } />
+          <Route path="/history" element={authToken 
+            ? <HistoryPage onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
+            : <Navigate to='/login' state={"/history"}/>
+          } />
+          <Route path="/parking" element={authToken 
+            ? <ParkingOverview onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
+            : <Navigate to='/login' state={"/parking"}/>
           } />
         </Routes>
       </div>

@@ -7,7 +7,7 @@ const SlideOutMenu = ({ isMenuOpen, toggleMenu, onLogOut, generalInfo }) => {
   const [user, setUser] = useState('');
   const navigate = useNavigate();
   function redirectToTempAccess() { navigate('/temp-access'); }
-  function redirectToGateControl() { navigate('/'); }
+
 
   useEffect(() => {
     setUser(generalInfo.user);
@@ -28,34 +28,34 @@ const SlideOutMenu = ({ isMenuOpen, toggleMenu, onLogOut, generalInfo }) => {
 
         {/* Menu Items */}
         <nav className="space-y-4">
-        <button onClick={redirectToGateControl} className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
+        <button onClick={() => {navigate("/");}} className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
             <Clock className="w-5 h-5" />
-            <span>Gate Control</span>
+            <span>Ovládanie brány</span>
           </button>
-          <button className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
+          <button onClick={() => {navigate("/history");}} className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
             <Clock className="w-5 h-5" />
-            <span>History</span>
+            <span>História</span>
           </button>
           <button className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
             <Car className="w-5 h-5" />
-            <span>Manage License Plates</span>
+            <span>Spravovať ŠPZ</span>
           </button>
-          <button onClick={redirectToTempAccess} className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
+          <button onClick={() => {navigate("/temp-access");}} className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
             <Link2 className="w-5 h-5" />
-            <span>Generate Temporary Access</span>
+            <span>Generovať dočasný prístup</span>
           </button>
-          <button className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
+          <button onClick={() => {navigate("/parking");}} className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
             <Car className="w-5 h-5" />
-            <span>Parking Lot Overview</span>
+            <span>Prehľad parkoviska</span>
           </button>
           <button className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
             <Settings className="w-5 h-5" />
-            <span>Settings</span>
+            <span>Nastavenia</span>
           </button>
         </nav>
         <button onClick={onLogOut} className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg mb-4 mt-4">
             <LogOut className="w-5 h-5" />
-            <span>Log Out</span>
+            <span>Odhlásiť sa</span>
         </button>
       </div>
     </div>
