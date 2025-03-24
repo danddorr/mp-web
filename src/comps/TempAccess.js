@@ -19,7 +19,6 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
     const [accessEntries, setAccessEntries] = useState([]);
     
     useEffect(() => {
-      console.log(generalInfo);
         fetch(`${process.env.REACT_APP_API_DOMAIN}/api/temporary-access/`, {
           headers: {
             'Authorization': `JWT ${generalInfo.authToken}`
@@ -69,8 +68,7 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
     }
 
     return (
-      <div className="h-screen w-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white overflow-y-auto overflow-x-hidden">
-        <Header onLogOut={onLogOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/>
+      <div className="h-full flex-1 overflow-y-auto bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white">
         <div className="max-w-2xl mx-auto mt-0 mb-0 md:mt-4 md:mb-4 bg-gray-800/30 backdrop-blur rounded-lg border border-transparent md:border-gray-700 shadow-xl p-4">
           <h1 className="text-3xl font-bold text-white text-center mb-2 mt-8">
             Dočasný prístup
@@ -78,11 +76,12 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
           <p className="text-gray-400 text-center mb-12">
               Spravujte dočasné prístupové povolenia pre návštevníkov
           </p>
+          
           {/* Create Access Button */}
           <button 
             className="w-full bg-blue-600 hover:bg-blue-500 text-white 
-                       flex items-center justify-center p-4 rounded-lg mb-4 
-                       transition-colors text-lg font-bold"
+                      flex items-center justify-center p-4 rounded-lg mb-4 
+                      transition-colors text-lg font-bold"
             onClick={() => navigate('/temp-access/create') }
           >
             <Plus className="mr-2" /> Vytvoriť dočasný prístup

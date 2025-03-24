@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { List, Clock, ChevronLeft, ChevronRight, Car, User, Lock } from 'lucide-react';
-import Header from './Header';
 
 const HistoryPage = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
   const [activeTab, setActiveTab] = useState('triggers');
@@ -90,9 +89,7 @@ const HistoryPage = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) =
   };
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white overflow-y-auto overflow-x-hidden">
-      <Header onLogOut={onLogOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo} />
-      
+    <div className="h-full flex-1 overflow-y-auto bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white">
       <div className="max-w-4xl mx-auto mt-0 mb-0 md:mt-4 md:mb-4 bg-gray-800/30 backdrop-blur rounded-lg border border-transparent md:border-gray-700 shadow-xl p-4">
         <h1 className="text-3xl font-bold text-white text-center mb-2 mt-8">
           História záznamov

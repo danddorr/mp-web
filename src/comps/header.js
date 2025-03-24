@@ -1,16 +1,37 @@
-import React, { useState } from 'react';
-import { Menu, Car, User, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { User, LogOut, Menu as MenuIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import SlideOutMenu from './Menu';
 
-const Header = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+const Header = ({ onLogOut, gateStateDisplay, generalInfo }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [user, setUser] = useState('');
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
-    const toggleMenu = () => {
-      setIsMenuOpen(!isMenuOpen);
+  useEffect(() => {
+    setUser(generalInfo?.user || '');
+  }, [generalInfo]);
+
+  useEffect(() => {
+    // Close dropdown when clicking outside
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
     };
 
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
-    <header className="bg-gray-900 w-auto border-b border-gray-800 p-4 sticky top-0 bottom-0 z-10">
+    <header className="bg-gray-900 w-full border-b border-gray-800 p-4 z-10">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between">
           {/* Left side - Menu and Status */}
@@ -20,7 +41,7 @@ const Header = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
               aria-label="Toggle menu"
               className="p-2 text-white hover:text-gray-400 hover:bg-gray-800 rounded-lg transition-colors"
             >
-              <Menu className="w-6 h-6" />
+              <MenuIcon className="w-6 h-6" />
             </button>
             
             <div className="flex items-center gap-2">
@@ -31,35 +52,39 @@ const Header = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
             </div>
           </div>
 
-          {/* Right side - Control Buttons */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => sendTrigger('start_v')}
-              aria-label="Open for vehicles"
-              className="flex items-center gap-2 px-3 py-2 text-sm bg-blue-600 hover:bg-blue-500 
-                       text-white rounded-lg transition-colors md:px-4"
-            >
-              <Car className="w-4 h-4" />
-              <span className="hidden md:inline">Vozidlo</span>
-            </button>
-            
-            <button
-              onClick={() => sendTrigger('start_p')}
-              aria-label="Open for pedestrians"
-              className="flex items-center gap-2 px-3 py-2 text-sm bg-green-600 hover:bg-green-500 
-                       text-white rounded-lg transition-colors md:px-4"
-            >
-              <User className="w-4 h-4" />
-              <span className="hidden md:inline">Chodec</span>
-            </button>
-            
-            
+          {/* Right side - User dropdown */}
+          <div className="flex items-center">
+            <div className="relative" ref={dropdownRef}>
+              <button 
+                onClick={() => setDropdownOpen(!dropdownOpen)} 
+                className="flex items-center space-x-2 p-2 hover:bg-gray-800 rounded-lg"
+              >
+                <User className="w-5 h-5" />
+                <span>{user?.username || 'Používateľ'}</span>
+              </button>
+              
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-30">
+                  <div className="p-1">
+                    <button 
+                      onClick={() => {
+                        onLogOut();
+                        setDropdownOpen(false);
+                      }}
+                      className="flex items-center space-x-2 px-4 py-2 w-full text-left text-white hover:bg-gray-700 border border-transparent rounded-t-lg"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      <span>Odhlásiť sa</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-      <SlideOutMenu isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} onLogOut={onLogOut} generalInfo={generalInfo}/>
+      <SlideOutMenu isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
     </header>
-    
   );
 };
 

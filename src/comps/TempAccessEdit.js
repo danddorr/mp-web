@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Car, User, X, Copy } from 'lucide-react';
-import Header from './Header';
 import Counter from './Counter';
 
 const TempAccessEditForm = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
@@ -78,8 +77,7 @@ const TempAccessEditForm = ({ onLogOut, gateStateDisplay, sendTrigger, generalIn
   const accessLink = window.location.origin + "/guest/" + prefill.link;
 
   return (
-    <div className="w-screen h-dvh bg-gradient-to-b from-gray-800 via-gray-900 to-black overflow-y-auto text-white">
-      <Header onLogOut={onLogOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/>
+    <div className="h-full flex-1 overflow-y-auto bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white">
       <div className="max-w-2xl mx-auto md:mt-4 md:mb-4 bg-gray-800/30 backdrop-blur rounded-lg border border-transparent md:border-gray-700 shadow-xl p-4">
         <div className="flex items-center">
           <button className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"

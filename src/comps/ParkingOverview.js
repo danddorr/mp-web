@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Car, Clock, Calendar, AlertTriangle } from 'lucide-react';
-import Header from './Header';
 
-const ParkingOverview = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
+const ParkingOverview = ({generalInfo }) => {
   const [statistics, setStatistics] = useState(null);
   const [parkedVehicles, setParkedVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -83,9 +82,7 @@ const ParkingOverview = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo 
   const capacityStatus = getCapacityStatus();
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white overflow-y-auto overflow-x-hidden">
-      <Header onLogOut={onLogOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo} />
-      
+    <div className="h-full flex-1 overflow-y-auto bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white">      
       <div className="max-w-4xl mx-auto mt-0 mb-0 md:mt-4 md:mb-4 bg-gray-800/30 backdrop-blur rounded-lg border border-transparent md:border-gray-700 shadow-xl p-4">
         <h1 className="text-3xl font-bold text-white text-center mb-2 mt-8">
           Prehľad parkoviska
