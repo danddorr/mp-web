@@ -122,12 +122,6 @@ const TempGateControl = ({ gateStateDisplay, sendTrigger }) => {
 
     return (
         <div className="min-h-screen w-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white">
-            {/* Header */}
-            <header className="bg-gray-900 border-b border-gray-800 p-4 sticky top-0 z-10 shadow-lg">
-                <div className="max-w-4xl mx-auto flex items-center justify-center">
-                    <h1 className="text-xl font-bold">Kontrola Školskej Brány</h1>
-                </div>
-            </header>
 
             {/* Main Content */}
             <main className="container mx-auto p-4 max-w-lg">
@@ -174,7 +168,7 @@ const TempGateControl = ({ gateStateDisplay, sendTrigger }) => {
                     {/* Access type info */}
                     {accessInfo.ecv && (
                         <div className="bg-gray-700/50 px-4 py-3 rounded-lg mb-4">
-                            <span className="text-xs text-gray-400 block">ŠPZ Vozidla</span>
+                            <span className="text-xs text-gray-400 block">EČV Vozidla</span>
                             <span className="text-xl font-mono font-bold">{accessInfo.ecv}</span>
                         </div>
                     )}

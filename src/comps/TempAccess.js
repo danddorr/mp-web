@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Car, User, Edit2, Trash2, Link2, ChevronDown, Copy } from 'lucide-react';
-import Header from './Header';
+import { Plus, Car, User, Edit2, Trash2, Link2, ChevronDown} from 'lucide-react';
 
 const formatDate = (date) => {
   return date.toLocaleString('de-DE', {
@@ -14,7 +13,7 @@ const formatDate = (date) => {
   });
 };
 
-const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
+const TemporaryAccessManagement = ({ generalInfo }) => {
     const navigate = useNavigate();
     const [accessEntries, setAccessEntries] = useState([]);
     
@@ -69,7 +68,7 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
 
     return (
       <div className="h-full flex-1 overflow-y-auto bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white">
-        <div className="max-w-2xl mx-auto mt-0 mb-0 md:mt-4 md:mb-4 bg-gray-800/30 backdrop-blur rounded-lg border border-transparent md:border-gray-700 shadow-xl p-4">
+        <div className="max-w-4xl mx-auto mt-0 mb-0 md:mt-4 md:mb-4 bg-gray-800/30 backdrop-blur rounded-lg border border-transparent md:border-gray-700 shadow-xl p-4">
           <h1 className="text-3xl font-bold text-white text-center mb-2 mt-8">
             Dočasný prístup
           </h1>
@@ -119,7 +118,7 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
           </div>
 
           {/* Access Entries List */}
-          <div className="space-y-4 overflow-y-auto">
+          <div className="overflow-y-auto space-y-4 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
             {filteredEntries.map(entry => (
               <div 
                 key={entry.link} 
@@ -146,7 +145,7 @@ const TemporaryAccessManagement = ({ onLogOut, gateStateDisplay, sendTrigger, ge
                           className="flex items-center text-xl font-bold text-white gap-1 hover:bg-green-600/20 p-2 -m-2 rounded-lg transition-colors"
                         >
                           <Link2 className="mr-2 text-green-400" />
-                          Skopírovať Link
+                          {entry.link}
                         </button>
                       </>
                     )}

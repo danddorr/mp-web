@@ -42,12 +42,12 @@ const Header = ({ onLogOut, gateStateDisplay, generalInfo }) => {
               <MenuIcon className="w-6 h-6" />
             </button>
             {window.location.origin+"/" !== window.location.href && (
-              <div className="flex items-center gap-2">
-              <Columns3 className="w-5 h-5 text-gray-400" />
-              <span className={`px-2 py-1 rounded-full text-xs font-medium text-white`}>
-                {gateStateDisplay}
-              </span>
-            </div>
+              <div className="flex items-center">
+                <Columns3 className="w-5 h-5 text-gray-400" />
+                <span className={`px-2 py-1 rounded-full text-xs font-medium text-white`}>
+                  {gateStateDisplay}
+                </span>
+              </div>
             )}
             
           </div>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Car, User, X } from 'lucide-react';
 import Counter from './Counter';
 
-const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
+const TempAccessCreateForm = ({ generalInfo }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('license');
   const [licensePlate, setLicensePlate] = useState('');
@@ -30,7 +30,7 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
       valid_from: startDate,
       valid_until: endDate,
       open_vehicle: openVehicle,
-      open_pedestrian: openPedestrian,
+      open_pedestrian: activeTab === 'license' ? 0 : openPedestrian, // Set to 0 for license type
     };
 
     fetch(`${process.env.REACT_APP_API_DOMAIN}/api/temporary-access/`, {
@@ -88,7 +88,7 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
                   : 'text-gray-300 hover:bg-gray-700/50'
               }`}
             >
-              ŠPZ
+              EČV
             </button>
             <button
               onClick={() => setActiveTab('link')}
@@ -106,19 +106,19 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
         {activeTab === 'license' && (
           <div className="mb-8">
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Číslo ŠPZ vozidla
+              Číslo EČV vozidla
             </label>
             <input
               type="text"
               value={licensePlate}
               onChange={(e) => setLicensePlate(e.target.value)}
-              placeholder="Zadajte číslo ŠPZ"
+              placeholder="Zadajte číslo EČV"
               className="w-full p-3 bg-gray-800/50 border border-gray-600 text-white rounded-lg 
                        focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 
                        hover:border-gray-500 transition-colors placeholder-gray-400"
             />
             <p className="text-sm text-gray-400 mt-2">
-              Zadajte číslo ŠPZ vozidla pre dočasné povolenie prístupu
+              Zadajte číslo EČV vozidla pre dočasné povolenie prístupu
             </p>
           </div>
         )}
@@ -152,7 +152,7 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className={`flex flex-wrap gap-4 justify-center mb-8`}>
           <Counter
             icon={Car}
             value={openVehicle}
@@ -163,16 +163,19 @@ const TempAccessCreateForm = ({ onLogOut, gateStateDisplay, sendTrigger, general
             canModify={canOpenVehicle}
             isAdmin={isAdmin}
           />
-          <Counter
-            icon={User}
-            value={openPedestrian}
-            label="Prístup chodcov"
-            helperText="Počet povolených osôb"
-            onIncrement={() => setOpenPedestrian(openPedestrian + 1)}
-            onDecrement={() => setOpenPedestrian(openPedestrian - 1)}
-            canModify={canOpenPedestrian}
-            isAdmin={isAdmin}
-          />
+          
+          {activeTab === 'link' && (
+            <Counter
+              icon={User}
+              value={openPedestrian}
+              label="Prístup chodcov"
+              helperText="Počet povolených osôb"
+              onIncrement={() => setOpenPedestrian(openPedestrian + 1)}
+              onDecrement={() => setOpenPedestrian(openPedestrian - 1)}
+              canModify={canOpenPedestrian}
+              isAdmin={isAdmin}
+            />
+          )}
         </div>
 
         <p className="text-gray-400 italic text-center text-sm mb-8">

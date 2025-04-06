@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Car, User, X, Copy } from 'lucide-react';
 import Counter from './Counter';
 
-const TempAccessEditForm = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
+const TempAccessEditForm = ({ generalInfo }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const prefill = location.state?.prefill || {};
@@ -43,7 +43,7 @@ const TempAccessEditForm = ({ onLogOut, gateStateDisplay, sendTrigger, generalIn
       valid_from: startDate,
       valid_until: endDate,
       open_vehicle: openVehicle,
-      open_pedestrian: openPedestrian,
+      open_pedestrian: activeTab === 'ecv' ? 0 : openPedestrian, // Set to 0 for EČV type
     };
 
     fetch(`${process.env.REACT_APP_API_DOMAIN}/api/temporary-access/${prefill.link}/`, {
@@ -95,13 +95,13 @@ const TempAccessEditForm = ({ onLogOut, gateStateDisplay, sendTrigger, generalIn
         {activeTab === 'ecv' && (
           <div className="mb-8">
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Číslo ŠPZ vozidla
+              Číslo EČV vozidla
             </label>
             <div className="w-full p-3 bg-gray-800/50 border border-gray-600 text-white rounded-lg">
               {licensePlate}
             </div>
             <p className="text-sm text-gray-400 mt-2">
-              Toto je číslo ŠPZ vozidla pre dočasné povolenie prístupu
+              Toto je číslo EČV vozidla pre dočasné povolenie prístupu
             </p>
           </div>
         )}
@@ -156,7 +156,7 @@ const TempAccessEditForm = ({ onLogOut, gateStateDisplay, sendTrigger, generalIn
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className={`flex ${activeTab === 'link' ? 'flex-wrap gap-4' : 'justify-center'} mb-8`}>
           <Counter
             icon={Car}
             value={openVehicle}
@@ -167,16 +167,19 @@ const TempAccessEditForm = ({ onLogOut, gateStateDisplay, sendTrigger, generalIn
             canModify={canOpenVehicle}
             isAdmin={isAdmin}
           />
-          <Counter
-            icon={User}
-            value={openPedestrian}
-            label="Prístup chodcov"
-            helperText="Počet povolených osôb"
-            onIncrement={() => setOpenPedestrian(openPedestrian + 1)}
-            onDecrement={() => setOpenPedestrian(openPedestrian - 1)}
-            canModify={canOpenPedestrian}
-            isAdmin={isAdmin}
-          />
+          
+          {activeTab === 'link' && (
+            <Counter
+              icon={User}
+              value={openPedestrian}
+              label="Prístup chodcov"
+              helperText="Počet povolených osôb"
+              onIncrement={() => setOpenPedestrian(openPedestrian + 1)}
+              onDecrement={() => setOpenPedestrian(openPedestrian - 1)}
+              canModify={canOpenPedestrian}
+              isAdmin={isAdmin}
+            />
+          )}
         </div>
 
         <p className="text-gray-400 italic text-center text-sm mb-8">

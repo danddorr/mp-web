@@ -11,7 +11,7 @@ import ParkingOverview from './comps/ParkingOverview';
 import { useState, useEffect, useRef } from 'react';
 import Cookies from 'js-cookie';
 import Header from './comps/Header';
-import SlideOutMenu from './comps/Menu';
+import LicensePlates from './comps/LicensePlates';
 
 function App() {
   const [authToken, setAuthToken] = useState(
@@ -19,9 +19,7 @@ function App() {
   );
   const [gateStateDisplay, setGateStateDisplay] = useState('');
   const [gateState, setGateState] = useState('unknown');
-  const [lastWsMessage, setLastWsMessage] = useState('');
   const [generalInfo, setGeneralInfo] = useState({ user: null });
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   let ws = useRef(null);
   let timeout = 250;
 
@@ -128,10 +126,14 @@ function App() {
     window.location.href = '/login';
   };
 
+  function checkHeader() {
+    return window.location.href.includes("guest") || window.location.href.includes("login")
+  }
+
   return (
     <Router>
       <div className="App min-h-screen flex flex-col text-white">
-        {!window.location.href.includes("guest") && (
+        {!checkHeader() && (
           <Header 
             onLogOut={logOut}
             gateStateDisplay={gateStateDisplay}
@@ -144,28 +146,32 @@ function App() {
             <Route path="/guest/:accesslink" element={<TempGateControl gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} />} />
             <Route path="*" element={<Navigate to="/" replace={true} />} />
             <Route path="/" element={authToken 
-              ? <GateControlApp onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
+              ? <GateControlApp gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
               : <Navigate to='/login' state={"/"}/>
             }/>
             <Route path="/temp-access/create" element={authToken 
-              ? <TempAccessCreateForm onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
+              ? <TempAccessCreateForm generalInfo={generalInfo}/> 
               : <Navigate to='/login'  state={"/temp-access"}/>
             } />
             <Route path="/temp-access/edit" element={authToken 
-              ? <TempAccessEditForm onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
+              ? <TempAccessEditForm generalInfo={generalInfo}/> 
               : <Navigate to='/login'  state={"/temp-access"}/>
             } />
             <Route path="/temp-access" element={authToken 
-              ? <TempAccess onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
+              ? <TempAccess generalInfo={generalInfo}/> 
               : <Navigate to='/login' state={"/temp-access"}/>
             } />
             <Route path="/history" element={authToken 
-              ? <HistoryPage onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
+              ? <HistoryPage generalInfo={generalInfo}/> 
               : <Navigate to='/login' state={"/history"}/>
             } />
             <Route path="/parking" element={authToken 
-              ? <ParkingOverview onLogOut={logOut} gateStateDisplay={gateStateDisplay} sendTrigger={sendTrigger} generalInfo={generalInfo}/> 
+              ? <ParkingOverview generalInfo={generalInfo}/> 
               : <Navigate to='/login' state={"/parking"}/>
+            } />
+            <Route path="/license-plates" element={authToken 
+              ? <LicensePlates generalInfo={generalInfo}/> 
+              : <Navigate to='/login' state={"/license-plates"}/>
             } />
           </Routes>
         </main>

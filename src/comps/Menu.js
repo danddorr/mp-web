@@ -35,7 +35,7 @@ const SlideOutMenu = ({ isMenuOpen, toggleMenu }) => {
             <History className="w-5 h-5" />
             <span>História</span>
           </button>
-          <button className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
+          <button onClick={() => {handleNavigate("/license-plates");}} className="flex items-center space-x-3 w-full p-2 hover:bg-gray-800 rounded-lg text-start">
             <Car className="w-5 h-5" />
             <span>Spravovať ŠPZ</span>
           </button>

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Car, Clock, Calendar, AlertTriangle } from 'lucide-react';
 
 const ParkingOverview = ({generalInfo }) => {
   const [statistics, setStatistics] = useState(null);
   const [parkedVehicles, setParkedVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (generalInfo?.authToken) {

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Car, UserCircle2, Lock, Infinity, CheckCircle, ChevronRight, ExternalLink } from 'lucide-react';
+import { Car, UserCircle2, Lock, CheckCircle, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const GateControlApp = ({ gateStateDisplay, sendTrigger, onLogOut, generalInfo }) => {
+const GateControlApp = ({ gateStateDisplay, sendTrigger, generalInfo }) => {
     const [actionFeedback, setActionFeedback] = useState(null);
     const [parkingStats, setParkingStats] = useState(null);
     const [loadingStats, setLoadingStats] = useState(true);
@@ -192,7 +192,7 @@ const GateControlApp = ({ gateStateDisplay, sendTrigger, onLogOut, generalInfo }
                             
                             <div className="flex justify-between mt-4 text-sm">
                                 <span className="text-gray-400">Obsadenosť {Math.round((parkingStats?.current_parked || 0) / 20 * 100)}%</span>
-                                <span class="text-gray-400">Dnes návštev: {parkingStats?.daily_stats && Object.values(parkingStats.daily_stats).pop() || 0}</span>
+                                <span className="text-gray-400">Dnes návštev: {parkingStats?.daily_stats && Object.values(parkingStats.daily_stats).pop() || 0}</span>
                             </div>
                         </div>
                     )}

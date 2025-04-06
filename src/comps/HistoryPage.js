@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { List, Clock, ChevronLeft, ChevronRight, Car, User, Lock } from 'lucide-react';
 
-const HistoryPage = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) => {
+const HistoryPage = ({ generalInfo }) => {
   const [activeTab, setActiveTab] = useState('triggers');
   const [data, setData] = useState([]);
   const [pagination, setPagination] = useState({
@@ -12,7 +11,6 @@ const HistoryPage = ({ onLogOut, gateStateDisplay, sendTrigger, generalInfo }) =
     page: 1
   });
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const isAdmin = generalInfo?.user?.is_admin;
 
   const GATE_STATES = {
