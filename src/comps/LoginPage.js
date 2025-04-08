@@ -59,7 +59,7 @@ const LoginPage = ({ onLogIn }) => {
           </div>
 
           {/* Title */}
-          <h2 className="text-2xl font-bold text-center mb-8">Sign In</h2>
+          <h1 className="text-2xl font-bold text-center mb-4">Prihlásenie</h1>
 
           
 
@@ -67,7 +67,7 @@ const LoginPage = ({ onLogIn }) => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-                Email
+                Používateľské meno
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -81,14 +81,14 @@ const LoginPage = ({ onLogIn }) => {
                   className="block w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg 
                            focus:ring-2 focus:ring-blue-500 focus:border-transparent
                            placeholder-gray-500 text-white"
-                  placeholder="Enter your email"
+                  placeholder="Zadajte používateľské meno"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-                Password
+                Heslo
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -102,26 +102,12 @@ const LoginPage = ({ onLogIn }) => {
                   className="block w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg 
                            focus:ring-2 focus:ring-blue-500 focus:border-transparent
                            placeholder-gray-500 text-white"
-                  placeholder="Enter your password"
+                  placeholder="Zadajte heslo"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 bg-gray-800 border-gray-700 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 text-gray-300">
-                  Remember me
-                </label>
-              </div>
-              <button type="button" className="text-blue-400 hover:text-blue-300">
-                Forgot password?
-              </button>
-            </div>
+    
 
             <button
               type="submit"

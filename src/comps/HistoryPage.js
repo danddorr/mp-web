@@ -13,6 +13,11 @@ const HistoryPage = ({ generalInfo }) => {
   const [loading, setLoading] = useState(false);
   const isAdmin = generalInfo?.user?.is_admin;
 
+  const TRIGGER_TYPES = {
+    'start_v': 'Otvoriť pre vozidlo',
+    'start_p': 'Otvoriť pre chodca',
+  }
+
   const GATE_STATES = {
     'open_p': 'Otvorené pre chodcov',
     'open_v': 'Otvorené pre vozidlo',
@@ -164,15 +169,44 @@ const HistoryPage = ({ generalInfo }) => {
                     {activeTab === 'triggers' ? (
                       <>
                         <td className="px-6 py-4">
-                          <span className={
-                            item.trigger_type === 'start_v' 
-                              ? 'text-blue-400' 
-                              : item.trigger_type === 'start_p'
-                                ? 'text-green-400'
-                                : 'text-gray-400'
-                          }>
-                            {item.trigger_type}
-                          </span>
+                          {item.trigger_agent === 'rpi' ? (
+                            <span className="text-orange-400 flex items-center gap-2">
+                              <Car className="w-4 h-4" />
+                              <button 
+                                  onClick={() => window.location.href = `/license-plates`}
+                                  className="hover:underline cursor-pointer"
+                                >
+                                  {item.ecv_value || 'Neznáme EČV'}
+                                </button>
+                            </span>
+                          ) : item.trigger_agent === 'temp' ? (
+                            <span className="text-purple-400 flex items-center gap-2">
+                              <Clock className="w-4 h-4" />
+                                <button 
+                                  onClick={() => window.location.href = `/temp-access/`}
+                                  className="hover:underline cursor-pointer"
+                                >
+                                  {item.temporary_access_link || 'Dočasný prístup'}
+                                </button>
+                            </span>
+                          ) : (
+                            <span className={`${
+                              item.trigger_type === 'start_v' 
+                                ? 'text-blue-400' 
+                                : item.trigger_type === 'start_p'
+                                  ? 'text-green-400'
+                                  : 'text-gray-400'
+                            } flex items-center gap-2`}>
+                              {
+                                item.trigger_type === 'start_v' 
+                                ? <Car className="w-4 h-4" /> 
+                                : item.trigger_type === 'start_p'
+                                  ? <User className="w-4 h-4" />
+                                  : <span className="w-4 h-4 bg-gray-600/20 rounded-full"></span>
+                              }
+                              {TRIGGER_TYPES[item.trigger_type] || item.trigger_type}
+                            </span>
+                          )}
                         </td>
                         <td className="px-6 py-4">{item.username || 'Systém'}</td>
                       </>
